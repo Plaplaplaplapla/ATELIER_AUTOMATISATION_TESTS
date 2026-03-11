@@ -9,6 +9,10 @@ import sqlite3
 app = Flask(__name__)
 init_db()
 
+@app.get("/")
+def consignes():
+     return render_template('consignes.html')
+
 @app.route("/run")
 def run():
     result = run_qos(10)
@@ -21,10 +25,6 @@ def dashboard():
     runs = list_runs(20)
     last_run = runs[0] if runs else None
     return render_template("dashboard.html", runs=runs, last_run=last_run)
-
-@app.get("/")
-def consignes():
-     return render_template('consignes.html')
 
 if __name__ == "__main__":
     # utile en local uniquement
