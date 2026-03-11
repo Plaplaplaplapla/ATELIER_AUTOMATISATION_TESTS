@@ -26,6 +26,24 @@ def dashboard():
     last_run = runs[0] if runs else None
     return render_template("dashboard.html", runs=runs, last_run=last_run)
 
+
+@app.route("/health")
+def health():
+    runs = list_runs(1)
+
+    if not runs:
+        return {"status": "unknown"}
+
+    last = runs[0]
+
+    return {
+        "status": "ok" if last["availability"] > 0.9 else "degraded",
+        "availability": last["availability"],
+        "error_rate": last["error_rate"],
+        "avg_latency_ms": last["avg_latency_ms"],
+        "p95_latency_ms": last["p95_latency_ms"]
+    }
+
 if __name__ == "__main__":
     # utile en local uniquement
     app.run(host="0.0.0.0", port=5000, debug=True) 
