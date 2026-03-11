@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard API QoS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f7f7f7;
+      color: #222;
+    }
+    h1, h2 {
+      margin-bottom: 12px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #efefef;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 14px;
+      background: #222;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dashboard API QoS</h1>
+
+  <p>
+    <a class="btn" href="/run">Lancer un run</a>
+  </p>
+
+  {% if last_run %}
+  <div class="card">
+    <h2>Dernier run</h2>
+    <p><strong>Date :</strong> {{ last_run.created_at }}</p>
+    <p><strong>Nombre d'appels :</strong> {{ last_run.runs }}</p>
+    <p><strong>Latence moyenne :</strong> {{ "%.2f"|format(last_run.avg_latency_ms or 0) }} ms</p>
+    <p><strong>P95 :</strong> {{ "%.2f"|format(last_run.p95_latency_ms or 0) }} ms</p>
+    <p><strong>Taux d'erreur :</strong> {{ "%.2f"|format((last_run.error_rate or 0) * 100) }} %</p>
+    <p><strong>Disponibilité :</strong> {{ "%.2f"|format((last_run.availability or 0) * 100) }} %</p>
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <h2>Historique</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Date</th>
+          <th>Runs</th>
+          <th>Avg (ms)</th>
+          <th>P95 (ms)</th>
+          <th>Error rate</th>
+          <th>Availability</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in runs %}
+        <tr>
+          <td>{{ run.id }}</td>
+          <td>{{ run.created_at }}</td>
+          <td>{{ run.runs }}</td>
+          <td>{{ "%.2f"|format(run.avg_latency_ms or 0) }}</td>
+          <td>{{ "%.2f"|format(run.p95_latency_ms or 0) }}</td>
+          <td>{{ "%.2f"|format((run.error_rate or 0) * 100) }} %</td>
+          <td>{{ "%.2f"|format((run.availability or 0) * 100) }} %</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
